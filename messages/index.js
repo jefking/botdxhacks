@@ -2,7 +2,7 @@
 var builder = require("botbuilder");
 var botbuilder_azure = require("botbuilder-azure");
 
-var useEmulator = (process.env.NODE_ENV == 'development');
+var useEmulator = true;//(process.env.NODE_ENV == 'development');
 
 var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
     appId: process.env['MicrosoftAppId'],
@@ -16,23 +16,24 @@ var bot = new builder.UniversalBot(connector);
 // Add dialog
 bot.dialog('/', [
     function (session, args, next) {
-        if (!session.userData.name) {
-            session.beginDialog('/profile');
-        } else {
-            next();
-        }
+        builder.Prompts.choice(session, 'THIS IS STEP 1', 'yes|no');
     },
     function (session, args, next) {
-        if (!session.dialogData.movie) {
+        console.log(args.response.index);
+        switch (args.response.index)
+        {
+            case 0:
             session.beginDialog('/movie');
-        } else {
-            next();
+            break;
+            case 1:
+            session.beginDialog('/profile');
+            break;
         }
     },
     function (session, args, next) {
-        builder.Prompts.choice(session, 'I guess ' +session.dialogData.movie+ ' sounds fine. Ready to start this?');
+        builder.Prompts.choice(session, 'I guess ' + session.dialogData.movie + ' sounds fine. Ready to start this?', 'yes|no');
 
-},
+    },
     function (session, results, next) {
         if (results.response) {
             session.beginDialog('/moviefacts');
@@ -51,13 +52,13 @@ bot.dialog('/profile', [
     },
     function (session, results) {
         session.userData.name = results.response;
-        session.endDialog(session, 'kk whatever '+ session.userData.name+' let us get to the good stuff');
+        session.endDialog(session, 'kk whatever ' + session.userData.name + ' let us get to the good stuff');
     }
 ]);
 
 bot.dialog('/movie', [
     function (session) {
-        builder.Prompts.confirm(session, 'Have you picked out a movie yet?');
+        builder.Prompts.choice(session, 'THIS IS STEP 2', 'yes|no');
     },
     function (session, results, next) {
         if (results.response) {
@@ -81,10 +82,10 @@ bot.dialog('/findmovie', [
 if (useEmulator) {
     var restify = require('restify');
     var server = restify.createServer();
-    server.listen(3978, function() {
+    server.listen(3978, function () {
         console.log('test bot endpont at http://localhost:3978/api/messages');
     });
-    server.post('/api/messages', connector.listen());    
+    server.post('/api/messages', connector.listen());
 } else {
     module.exports = { default: connector.listen() }
 }
