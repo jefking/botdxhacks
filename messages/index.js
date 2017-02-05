@@ -27,6 +27,7 @@ bot.dialog('/', [
 
 bot.dialog('/movie', [
     function (session) {
+        console.debug('------ IN HERE!!!! --------');
         builder.Prompts.text(session, 'What movie are you watching?');
     },
     function (session, results) {
@@ -38,7 +39,7 @@ bot.dialog('/movie', [
                 var cards = topFive.map(function (item) { return createCard(session, item) });
                 var message = new builder.Message(session).attachments(cards).attachmentLayout('carousel');
 
-                console.log('------ IN HERE!!!! --------');
+                console.debug('------ IN HERE!!!! --------');
                 // session.send(message);
                 // builder.Prompts.text(session);
 
@@ -65,6 +66,7 @@ bot.dialog('/movie', [
         }, 5000); */
 
         session.endConversation(results.response.entity);
+        
     }
     
 ]);
