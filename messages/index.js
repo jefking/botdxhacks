@@ -50,9 +50,7 @@ bot.dialog('/movie', [
 
     },
     function(session, results, next) {
-         
-        session.endConversation(results.response.entity);
-
+        session.send(`Here's your movie.`);
         var title = results.response.entity;
 
         session.userData.movielength = 90;// The time in minutes            
@@ -68,16 +66,7 @@ bot.dialog('/movie', [
             clearInterval(intervalTimer)
         }, 5000);
 
-
-        if (result.response) {
-            session.send("You are watching " + result + ". Let's get this party started!");
-            session.userData.movielength = 90;// The time in minutes            
-
-        } else {
-            session.send("ok");
-        }
-
-        session.endConversation(title);
+        session.endConversation(results.response.entity);
     }
     
 ]);
