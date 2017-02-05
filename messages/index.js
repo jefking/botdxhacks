@@ -35,16 +35,14 @@ bot.dialog('/movie', [
                 var movies = JSON.parse(body);
 
                 var topFive = movies.results.slice(0, 5);
-                var movieTitles = [];
-                for(var index = 0; index < topFive.length; index++) {
-                    movieTitles.push(topFive[index].title);
-                }
                 var cards = topFive.map(function (item) { return createCard(session, item) });
                 var message = new builder.Message(session).attachments(cards).attachmentLayout('carousel');
+
+                console.log('------ IN HERE!!!! --------');
                 // session.send(message);
                 // builder.Prompts.text(session);
 
-                builder.Prompts.choice(session, message, movieTitles);
+                builder.Prompts.choice(session, message, topFive.map((movie) => movie.title));
             } else {
                 session.send('Well this is embarassing I have no idea how to find you a movie...');
             }
