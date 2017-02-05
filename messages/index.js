@@ -43,13 +43,46 @@ bot.dialog('/movie', [
             }
         });
 
-    },
-    function (session, result) {
+    }
+    
+]);
+
+
+
+
+
+
+if (useEmulator) {
+    var restify = require('restify');
+    var server = restify.createServer();
+    server.listen(3978, function () {
+        console.log('test bot endpont at http://localhost:3978/api/messages');
+    });
+    server.post('/api/messages', connector.listen());
+} else {
+    module.exports = { default: connector.listen() }
+}
+
+
+
+function createCard(session, movie) {
+    var card = new builder.ThumbnailCard(session);
+
+    card.title(movie.title);
+    card.images([builder.CardImage.create(session, "https://image.tmdb.org/t/p/w500" + movie.poster_path)]);
+    card.text("Are you watching this movie? Tap this to receive fun facts throughout the show!");    
+    card.tap(new builder.CardAction.dialogAction(session, "startmovie", movie.title, "Selected Movie"));
+    return card;
+} 
+
+bot.dialog('startmovie', [
+   function (session, result) {
        
         if (result.response) {
             var title = result.response.entity;
 
             session.userData.movielength = 90;// The time in minutes            
+
             session.send("You are watching " + title + ". Let's get this party started!");
 
             var intervalTimer = setInterval(function () {
@@ -72,35 +105,5 @@ bot.dialog('/movie', [
         }
 
         session.endDialog();
-    }
+    } 
 ]);
-
-
-bot.dialog('/startmovie', [
-    
-]);
-
-
-
-if (useEmulator) {
-    var restify = require('restify');
-    var server = restify.createServer();
-    server.listen(3978, function () {
-        console.log('test bot endpont at http://localhost:3978/api/messages');
-    });
-    server.post('/api/messages', connector.listen());
-} else {
-    module.exports = { default: connector.listen() }
-}
-
-
-
-function createCard(session, movie) {
-    var card = new builder.ThumbnailCard(session);
-
-    card.title(movie.title);
-    card.images([builder.CardImage.create(session, "https://image.tmdb.org/t/p/w500" + movie.poster_path)]);
-    card.text("Are you watching this movie? Tap this to receive fun facts throughout the show!");
-    card.tap(new builder.CardAction.imBack(session, movie.title, "selected" ));
-    return card;
-} 
