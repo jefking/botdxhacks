@@ -3,7 +3,7 @@ var builder = require("botbuilder");
 var botbuilder_azure = require("botbuilder-azure");
 var request = require("request");
 
-var useEmulator =  (process.env.NODE_ENV == 'development');
+var useEmulator = (process.env.NODE_ENV == 'development');
 
 var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
     appId: process.env['MicrosoftAppId'],
@@ -89,6 +89,7 @@ function createCard(session, movie)
 
     card.title(movie.title);
     card.images([builder.CardImage.create(session, "https://image.tmdb.org/t/p/w500" + movie.poster_path)]);
+    card.text("Are you watching this movie? Tap this to receive fun facts throughout the show!");
     card.tap(new builder.CardAction.dialogAction(session, "startmovie", movie.title));
     return card;
 } 
