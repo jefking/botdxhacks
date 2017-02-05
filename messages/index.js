@@ -79,7 +79,7 @@ bot.dialog('startmovie', [
    function (session, result) {
        
         if (result.response) {
-            var title = result.response.entity;
+            var title = result.response;
 
             session.userData.movielength = 90;// The time in minutes            
 
