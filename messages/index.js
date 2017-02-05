@@ -34,7 +34,7 @@ bot.dialog('/', [
 bot.dialog('/movie', 
 [
     function (session) {
-        console.debug('------ IN HERE!!!! --------');
+        // console.debug('------ IN HERE!!!! --------');
         builder.Prompts.text(session, 'What movie are you watching?');
     },
 //     function (session, results) {
