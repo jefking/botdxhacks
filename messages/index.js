@@ -1,8 +1,9 @@
 "use strict";
 var builder = require("botbuilder");
 var botbuilder_azure = require("botbuilder-azure");
+var request = require("request");
 
-var useEmulator = (process.env.NODE_ENV == 'development');
+var useEmulator = true; //(process.env.NODE_ENV == 'development');
 
 var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
     appId: process.env['MicrosoftAppId'],
@@ -24,7 +25,7 @@ bot.dialog('/', [
     },
     function (session, args, next) {
         // Search for the movie and set it
-        if (!session.userData.movieid) {
+        if (!session.userData.movie) {
             session.beginDialog('/find');
         } else {
             next();
@@ -57,7 +58,7 @@ bot.dialog('/find', [
     function (session) {
         // Call the API 
         // Get a list of movies
-        var results = [
+        /*var results = [
             { name : "Spider Man",
             poster_url : "https://images-na.ssl-images-amazon.com/images/M/MV5BOWU3ZjIxZmYtMTRkOC00NTUyLTlhYjUtODhjODE4NDI5ZGY2XkEyXkFqcGdeQXVyMjc0MjUzMzU@._V1_SY1000_CR0,0,694,1000_AL_.jpg",
             html_url: "http://www.imdb.com/title/tt0392945/?ref_=fn_al_tt_2"
@@ -73,29 +74,26 @@ bot.dialog('/find', [
             html_url: "http://www.imdb.com/title/tt0392945/?ref_=fn_al_tt_2"
         }
         ];
-        var cards = results.map(function(item) { return createCard(session, item)});
-                    
-                    // prompt the user with the list
-                    //builder.Prompts.choice(session, 'What profile did you want to load?', usernames);
-                    var message = new builder.Message(session).attachments(cards).attachmentLayout('carousel');
-                    session.send(message); 
+        */
+
+        request("https://api.themoviedb.org/3/search/movie?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6&language=en-US&page=1&include_adult=false&query=" + session.userData.movie, function(error, response, body){
+            if (response){           
+                var movies = JSON.parse(body);   
+
+                var cards = movies.results.map(function(item) { return createCard(session, item)});
+                var message = new builder.Message(session).attachments(cards).attachmentLayout('carousel');
+                session.send(message);  
+            } else {
+                session.send('Well this is embarassing I have no idea how to find you a movie...');
+            }
+        });
+        
         // display
         // from selection reset name and set id
 
     }
 ]);
 
-function createCard(session, movie)
-{
-    
-    var card = new builder.ThumbnailCard(session);
-
-    card.title(movie.name);
-    card.images([builder.CardImage.create(session, movie.poster_url)]);
-    card.tap(new builder.CardAction.openUrl(session, movie.html_url));
-    return card;
-
-} 
 
 bot.dialog('/movielength', [
     function (session, results) {
@@ -115,3 +113,15 @@ if (useEmulator) {
 } else {
     module.exports = { default: connector.listen() }
 }
+
+
+
+function createCard(session, movie)
+{
+    var card = new builder.ThumbnailCard(session);
+
+    card.title(movie.title);
+    card.images([builder.CardImage.create(session, "https://image.tmdb.org/t/p/w1280" + movie.poster_path)]);
+    card.tap(new builder.CardAction.openUrl(session, "https://image.tmdb.org/t/p/w1280" + movie.poster_path));
+    return card;
+} 
