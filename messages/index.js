@@ -50,7 +50,7 @@ bot.dialog('/movie',
                 // session.send(message);
                 // builder.Prompts.text(session);
 
-                builder.Prompts.choice(session, message, topFive.map((movie) => movie.id.toString()));
+                builder.Prompts.choice(session, message, topFive.map((movie) => movie));
             } else {
                 session.send('Well this is embarassing I have no idea how to find you a movie...');
             }
