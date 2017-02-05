@@ -54,6 +54,7 @@ bot.dialog('/movie', [
 
 bot.dialog('/startmovie', [
     function (session, result) {
+
         if (result.response) {
             session.userData.movielength = 90;// The time in minutes            
             session.send("You are watching " + result + ". Let's get this party started!");
@@ -67,7 +68,13 @@ bot.dialog('/startmovie', [
                 clearInterval(intervalTimer)
             }, 5000);
 
+
+        if (result.response) {            
+            session.send("You are watching " + result + ". Let's get this party started!"); 
+            session.userData.movielength = 90;// The time in minutes            
+            
             session.endDialog();
+
         } else {
             session.send("ok");
         }
