@@ -51,7 +51,7 @@ bot.dialog('/movie', [
     },
     function(session, results, next) {
         session.send(`Here's your movie.`);
-        session.endConversation(results.response);
+        session.endConversation(results.response.entity);
     }
     
 ]);
