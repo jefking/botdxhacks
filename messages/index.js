@@ -38,6 +38,7 @@ bot.dialog('/movie', [
                 var cards = topFive.map(function (item) { return createCard(session, item) });
                 var message = new builder.Message(session).attachments(cards).attachmentLayout('carousel');
                 session.send(message);
+                builder.Prompts.text(session);
             } else {
                 session.send('Well this is embarassing I have no idea how to find you a movie...');
             }
