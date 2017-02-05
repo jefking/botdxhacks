@@ -17,17 +17,18 @@ var bot = new builder.UniversalBot(connector);
 // Add dialog
 bot.dialog('/', [
     function (session, args, next) {
-        if (!session.userData.movie) {
-            session.beginDialog('/movie');
-        } else {
-            next();
-        }
+        session.endConversation('finish');
+
+        // if (!session.userData.movie) {
+        //     session.beginDialog('/movie');
+        // } else {
+        //     next();
+        // }
     }
 ]);
 
 bot.dialog('/movie', [
     function (session) {
-        session.endConversation('finish');
         console.debug('------ IN HERE!!!! --------');
         builder.Prompts.text(session, 'What movie are you watching?');
     },
