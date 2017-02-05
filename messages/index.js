@@ -62,14 +62,14 @@ bot.dialog('/movie',
 
         session.send("You are watching " + title + ". Let's get this party started!");
 
-        /*var intervalTimer = setInterval(function () {
-            session.send('test');
+        var intervalTimer = setInterval(function () {
+            session.send('In setInterval');
         }, 1000);
 
         setTimeout(function () {
             session.send('time is up');
             clearInterval(intervalTimer)
-        }, 5000); */
+        }, 5000); 
 
         session.endConversation(results.response.entity);
         
