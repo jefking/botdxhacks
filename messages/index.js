@@ -19,7 +19,9 @@ var bot = new builder.UniversalBot(connector);
 // Add dialog
 bot.dialog('/', [
     function (session, args, next) {
-        session.endConversation('finish');
+        // session.endConversation('finish');
+
+        session.beginDialog('/movie');
 
         // if (!session.userData.movie) {
         //     session.beginDialog('/movie');
