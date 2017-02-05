@@ -42,7 +42,7 @@ bot.dialog('/movie', [
                 // session.send(message);
                 // builder.Prompts.text(session);
 
-                builder.Prompts.choice(session, message, topFive.map((movie) => movie.title));
+                builder.Prompts.choice(session, message, topFive.map((movie) => movie));
             } else {
                 session.send('Well this is embarassing I have no idea how to find you a movie...');
             }
@@ -50,8 +50,33 @@ bot.dialog('/movie', [
 
     },
     function(session, results, next) {
-        session.send(`Here's your movie.`);
-        session.endConversation(results.response.entity);
+         if (results.response.entity) {
+            var movie = results.response.entity;
+
+            session.userData.movielength = 90;// The time in minutes            
+
+            session.send("You are watching " + movie.title + ". Let's get this party started!");
+
+            var intervalTimer = setInterval(function () {
+                session.send('test');
+            }, 1000);
+
+            setTimeout(function () {
+                session.send('time is up');
+                clearInterval(intervalTimer)
+            }, 5000);
+
+
+            if (result.response) {
+                session.send("You are watching " + result + ". Let's get this party started!");
+                session.userData.movielength = 90;// The time in minutes            
+
+            } else {
+                session.send("ok");
+            }
+        }
+
+        session.endConversation();
     }
     
 ]);
@@ -84,35 +109,3 @@ function createCard(session, movie) {
     return card;
 } 
 
-bot.dialog('startmovie', [
-   function (session, result) {
-       
-        if (result.response) {
-            var title = result.response;
-
-            session.userData.movielength = 90;// The time in minutes            
-
-            session.send("You are watching " + title + ". Let's get this party started!");
-
-            var intervalTimer = setInterval(function () {
-                session.send('test');
-            }, 1000);
-
-            setTimeout(function () {
-                session.send('time is up');
-                clearInterval(intervalTimer)
-            }, 5000);
-
-
-            if (result.response) {
-                session.send("You are watching " + result + ". Let's get this party started!");
-                session.userData.movielength = 90;// The time in minutes            
-
-            } else {
-                session.send("ok");
-            }
-        }
-
-        session.endDialog();
-    } 
-]).triggerAction({matches: /startmovie/});
