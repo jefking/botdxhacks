@@ -44,21 +44,37 @@ bot.dialog('/', [
         session.beginDialog('/ensureProfile', session.userData.profile);
     },
     function (session, results) {
-        //   setInterval(function(){
-        //         session.send('test');
-        //         }, 5000); 
-        request("http://api.themoviedb.org/3/search/movie?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6&query=spiderman", function (error, response, body) {
-            // console.log(body);
+
+        request("http://api.themoviedb.org/3/search/movie?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6&query=shrek", function (error, response, body) {
+            console.log(process.env.MOVIE_DB_API_KEY);
+            console.log(body);
             const result = JSON.parse(body);            
             console.log(result.results[0].id);
    });        
-        request("https://api.themoviedb.org/3/movie/68658/translations?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6",function(error,response,body) {
+        request("https://api.themoviedb.org/3/movie/808/translations?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6",function(error,response,body) {
             session.send(body);
             const translation = JSON.parse(body);
             var highestRow = translation.translations.length;
             session.send(highestRow.toString());
             session.send(translation.translations[highestRow-1].name);
 });
+        session.userData.movie = {id:808}
+        //https://api.themoviedb.org/3/movie/{movie_id}?api_key=<<api_key>>&language=en-US
+        request("https://api.themoviedb.org/3/movie/"+session.userData.movie.id +"?api_key="+"d2bd0f8ec7a732cd06702f331cc9f6b6"+"&language=en-US",function(error,response,body) {
+            const details = JSON.parse(body);
+            session.userData.movie.length = details.runtime.toString()
+            session.send(details.runtime.toString());
+});
+         var intervalTimer = setInterval(function(){
+                session.send('test');
+                }, 1000); 
+
+        setTimeout(function(){
+        session.send('time is up');
+        clearInterval(intervalTimer)}, 5000); 
+        
+         
+
     
         //   HttpResponse<String> response = Unirest.get("https://api.themoviedb.org/3/search/movie?include_adult=false&page=1&language=en-US&api_key=%3C%3Capi_key%3E%3E").body("{}").asString();
 
