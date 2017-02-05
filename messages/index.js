@@ -55,9 +55,11 @@ bot.dialog('/movie', [
 bot.dialog('/startmovie', [
     function (session, result) {
 
+        var title = result.title;
+
         if (result.response) {
             session.userData.movielength = 90;// The time in minutes            
-            session.send("You are watching " + result + ". Let's get this party started!");
+            session.send("You are watching " + title + ". Let's get this party started!");
 
             var intervalTimer = setInterval(function () {
                 session.send('test');
@@ -103,6 +105,6 @@ function createCard(session, movie) {
     card.title(movie.title);
     card.images([builder.CardImage.create(session, "https://image.tmdb.org/t/p/w500" + movie.poster_path)]);
     card.text("Are you watching this movie? Tap this to receive fun facts throughout the show!");
-    card.tap(new builder.CardAction.dialogAction(session, "startmovie", movie.title));
+    card.tap(new builder.CardAction.dialogAction(session, "/startmovie", { title: movie.title}));
     return card;
 } 
