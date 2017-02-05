@@ -59,11 +59,13 @@ bot.dialog('/movie',
     },
     function(session, results, next) {
         session.send(`Here's your movie.`);
-        var movieId = results.response.entity;
+        var movie = results.response.entity;
+        var movieId = movie.id.toString();
 
-        session.send("You are watching movie Id " + movieId + ". Let's get this party started!");
-
+        
         var intervalTimer = setInterval(function () {
+            session.send("Let's see what languages " + movie.title + " is available in.");
+
             request("https://api.themoviedb.org/3/movie/" + movieId + "/translations?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6",function(error,response,body) {
             const translation = JSON.parse(body);
             var highestRow = translation.translations.length;
