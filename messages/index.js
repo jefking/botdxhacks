@@ -45,7 +45,7 @@ bot.dialog('/movie',
                 var cards = topFive.map(function (item) { return createCard(session, item) });
                 var message = new builder.Message(session).attachments(cards).attachmentLayout('carousel');
 
-                console.debug('------ IN HERE!!!! --------');
+                // console.debug('------ IN HERE!!!! --------');
                 // session.send(message);
                 // builder.Prompts.text(session);
 
