@@ -43,21 +43,12 @@ bot.dialog('/movie', [
             }
         });
 
-        session.endDialog();
     },
-    function (session, results) {
-        session.userData.movie = results.response;
-        session.endDialog(session, 'KK whatever ' + session.userData.movie + ' sounds ok');
-    }
-]);
-
-
-bot.dialog('/startmovie', [
     function (session, result) {
-
-        var title = result.title;
-
+       
         if (result.response) {
+            var title = result.response.entity;
+
             session.userData.movielength = 90;// The time in minutes            
             session.send("You are watching " + title + ". Let's get this party started!");
 
@@ -75,13 +66,18 @@ bot.dialog('/startmovie', [
                 session.send("You are watching " + result + ". Let's get this party started!");
                 session.userData.movielength = 90;// The time in minutes            
 
-                session.endDialog();
-
             } else {
                 session.send("ok");
             }
         }
+
+        session.endDialog();
     }
+]);
+
+
+bot.dialog('/startmovie', [
+    
 ]);
 
 
@@ -105,6 +101,6 @@ function createCard(session, movie) {
     card.title(movie.title);
     card.images([builder.CardImage.create(session, "https://image.tmdb.org/t/p/w500" + movie.poster_path)]);
     card.text("Are you watching this movie? Tap this to receive fun facts throughout the show!");
-    card.tap(new builder.CardAction.imBack(session, movie.title, "Let's do this!"));
+    card.tap(new builder.CardAction.imBack(session, movie.title, "selected" ));
     return card;
 } 
