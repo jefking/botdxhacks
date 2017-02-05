@@ -31,51 +31,52 @@ bot.dialog('/', [
     }
 ]);
 
-bot.dialog('/movie', [
-    function (session) {
-        console.debug('------ IN HERE!!!! --------');
-        builder.Prompts.text(session, 'What movie are you watching?');
-    },
-    function (session, results) {
-        request("https://api.themoviedb.org/3/search/movie?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6&language=en-US&page=1&include_adult=false&query=" + results.response, function (error, response, body) {
-            if (response) {
-                var movies = JSON.parse(body);
+bot.dialog('/movie', (session) => {session.endConversation('in movie')})
+// [
+//     function (session) {
+//         console.debug('------ IN HERE!!!! --------');
+//         builder.Prompts.text(session, 'What movie are you watching?');
+//     },
+//     function (session, results) {
+//         request("https://api.themoviedb.org/3/search/movie?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6&language=en-US&page=1&include_adult=false&query=" + results.response, function (error, response, body) {
+//             if (response) {
+//                 var movies = JSON.parse(body);
 
-                var topFive = movies.results.slice(0, 5);
-                var cards = topFive.map(function (item) { return createCard(session, item) });
-                var message = new builder.Message(session).attachments(cards).attachmentLayout('carousel');
+//                 var topFive = movies.results.slice(0, 5);
+//                 var cards = topFive.map(function (item) { return createCard(session, item) });
+//                 var message = new builder.Message(session).attachments(cards).attachmentLayout('carousel');
 
-                console.debug('------ IN HERE!!!! --------');
-                // session.send(message);
-                // builder.Prompts.text(session);
+//                 console.debug('------ IN HERE!!!! --------');
+//                 // session.send(message);
+//                 // builder.Prompts.text(session);
 
-                builder.Prompts.choice(session, message, topFive.map((movie) => movie.title));
-            } else {
-                session.send('Well this is embarassing I have no idea how to find you a movie...');
-            }
-        });
+//                 builder.Prompts.choice(session, message, topFive.map((movie) => movie.title));
+//             } else {
+//                 session.send('Well this is embarassing I have no idea how to find you a movie...');
+//             }
+//         });
 
-    },
-    function(session, results, next) {
-        session.send(`Here's your movie.`);
-        var title = results.response.entity;
+//     },
+//     function(session, results, next) {
+//         session.send(`Here's your movie.`);
+//         var title = results.response.entity;
 
-        session.send("You are watching " + title + ". Let's get this party started!");
+//         session.send("You are watching " + title + ". Let's get this party started!");
 
-        /*var intervalTimer = setInterval(function () {
-            session.send('test');
-        }, 1000);
+//         /*var intervalTimer = setInterval(function () {
+//             session.send('test');
+//         }, 1000);
 
-        setTimeout(function () {
-            session.send('time is up');
-            clearInterval(intervalTimer)
-        }, 5000); */
+//         setTimeout(function () {
+//             session.send('time is up');
+//             clearInterval(intervalTimer)
+//         }, 5000); */
 
-        session.endConversation(results.response.entity);
+//         session.endConversation(results.response.entity);
         
-    }
+//     }
     
-]);
+// ]);
 
 if (useEmulator) {
     var restify = require('restify');
