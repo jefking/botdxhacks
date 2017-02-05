@@ -3,7 +3,7 @@ var builder = require("botbuilder");
 var botbuilder_azure = require("botbuilder-azure");
 var request = require("request");
 
-var useEmulator = true; //(process.env.NODE_ENV == 'development');
+var useEmulator = (process.env.NODE_ENV == 'development');
 
 var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
     appId: process.env['MicrosoftAppId'],
@@ -47,6 +47,22 @@ bot.dialog('/', [
 bot.dialog('/movie', [
 function (session) {
         builder.Prompts.text(session, 'What movie are you watching?');
+    },    
+    function(session, results)
+    {
+        request("https://api.themoviedb.org/3/search/movie?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6&language=en-US&page=1&include_adult=false&query=" + results.response, function(error, response, body){
+            if (response){           
+                var movies = JSON.parse(body);   
+
+                var cards = movies.results.map(function(item) { return createCard(session, item)});
+                var message = new builder.Message(session).attachments(cards).attachmentLayout('carousel');
+                session.send(message);  
+            } else {
+                session.send('Well this is embarassing I have no idea how to find you a movie...');
+            }
+        });
+        
+        session.endDialog();
     },
     function (session, results) {
         session.userData.movie = results.response;
@@ -74,7 +90,6 @@ bot.dialog('/find', [
             html_url: "http://www.imdb.com/title/tt0392945/?ref_=fn_al_tt_2"
         }
         ];
-        */
 
         request("https://api.themoviedb.org/3/search/movie?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6&language=en-US&page=1&include_adult=false&query=" + session.userData.movie, function(error, response, body){
             if (response){           
@@ -88,6 +103,8 @@ bot.dialog('/find', [
             }
         });
         
+        session.endDialog();
+        */
         // display
         // from selection reset name and set id
 
