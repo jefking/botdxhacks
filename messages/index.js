@@ -27,6 +27,7 @@ bot.dialog('/', [
 
 bot.dialog('/movie', [
     function (session) {
+        session.endConversation('finish');
         console.debug('------ IN HERE!!!! --------');
         builder.Prompts.text(session, 'What movie are you watching?');
     },
