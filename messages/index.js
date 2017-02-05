@@ -3,7 +3,7 @@ var builder = require("botbuilder");
 var botbuilder_azure = require("botbuilder-azure");
 var request = require("request");
 
-var useEmulator = (process.env.NODE_ENV == 'development');
+var useEmulator = true; // (process.env.NODE_ENV == 'development');
 
 var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
     appId: process.env['MicrosoftAppId'],
@@ -70,54 +70,22 @@ function (session) {
     }
 ]);
 
-bot.dialog('/find', [
-    function (session) {
-        // Call the API 
-        // Get a list of movies
-        /*var results = [
-            { name : "Spider Man",
-            poster_url : "https://images-na.ssl-images-amazon.com/images/M/MV5BOWU3ZjIxZmYtMTRkOC00NTUyLTlhYjUtODhjODE4NDI5ZGY2XkEyXkFqcGdeQXVyMjc0MjUzMzU@._V1_SY1000_CR0,0,694,1000_AL_.jpg",
-            html_url: "http://www.imdb.com/title/tt0392945/?ref_=fn_al_tt_2"
-        },
-        
-            { name : "Spider Man 1",
-            poster_url : "https://images-na.ssl-images-amazon.com/images/M/MV5BOWU3ZjIxZmYtMTRkOC00NTUyLTlhYjUtODhjODE4NDI5ZGY2XkEyXkFqcGdeQXVyMjc0MjUzMzU@._V1_SY1000_CR0,0,694,1000_AL_.jpg",
-            html_url: "http://www.imdb.com/title/tt0392945/?ref_=fn_al_tt_2"
-        },
-        
-            { name : "The amazing Spider Man",
-            poster_url : "https://images-na.ssl-images-amazon.com/images/M/MV5BOWU3ZjIxZmYtMTRkOC00NTUyLTlhYjUtODhjODE4NDI5ZGY2XkEyXkFqcGdeQXVyMjc0MjUzMzU@._V1_SY1000_CR0,0,694,1000_AL_.jpg",
-            html_url: "http://www.imdb.com/title/tt0392945/?ref_=fn_al_tt_2"
-        }
-        ];
 
-        request("https://api.themoviedb.org/3/search/movie?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6&language=en-US&page=1&include_adult=false&query=" + session.userData.movie, function(error, response, body){
-            if (response){           
-                var movies = JSON.parse(body);   
-
-                var cards = movies.results.map(function(item) { return createCard(session, item)});
-                var message = new builder.Message(session).attachments(cards).attachmentLayout('carousel');
-                session.send(message);  
-            } else {
-                session.send('Well this is embarassing I have no idea how to find you a movie...');
-            }
-        });
-        
-        session.endDialog();
-        */
-        // display
-        // from selection reset name and set id
-
-    }
-]);
-
-
-bot.dialog('/movielength', [
+bot.dialog('/startmovie', [
     function (session, results) {
-        session.userData.movielength = 90;// The time in minutes
-        session.endDialog();
+        builder.Prompts.choice(session, 'Hit the button when you start watching to receive fun facts about the movie.', 'Start movie');
+    },
+    function (session, results) {
+        if (results.response) {            
+            session.userData.movielength = 90;// The time in minutes            
+            session.send("Let's do this!"); 
+            session.endDialog();
+        } else {
+            session.send("ok");
+        }
     }
 ]);
+
 
 
 if (useEmulator) {
@@ -138,7 +106,7 @@ function createCard(session, movie)
     var card = new builder.ThumbnailCard(session);
 
     card.title(movie.title);
-    card.images([builder.CardImage.create(session, "https://image.tmdb.org/t/p/w1280" + movie.poster_path)]);
-    card.tap(new builder.CardAction.openUrl(session, "https://image.tmdb.org/t/p/w1280" + movie.poster_path));
+    card.images([builder.CardImage.create(session, "https://image.tmdb.org/t/p/w500" + movie.poster_path)]);
+    card.tap(new builder.CardAction.dialogAction(session, "startmovie", movie.title));
     return card;
 } 
