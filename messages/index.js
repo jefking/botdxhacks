@@ -42,7 +42,7 @@ bot.dialog('/movie', [
                 // session.send(message);
                 // builder.Prompts.text(session);
 
-                builder.Prompts.choice(session, message, topFive.map((movie) => movie));
+                builder.Prompts.choice(session, message, topFive.map((movie) => movie.title));
             } else {
                 session.send('Well this is embarassing I have no idea how to find you a movie...');
             }
@@ -50,30 +50,28 @@ bot.dialog('/movie', [
 
     },
     function(session, results, next) {
-         if (results.response.entity) {
-            var movie = results.response.entity;
+         var title = results.response.entity;
 
+        session.userData.movielength = 90;// The time in minutes            
+
+        session.send("You are watching " + title + ". Let's get this party started!");
+
+        var intervalTimer = setInterval(function () {
+            session.send('test');
+        }, 1000);
+
+        setTimeout(function () {
+            session.send('time is up');
+            clearInterval(intervalTimer)
+        }, 5000);
+
+
+        if (result.response) {
+            session.send("You are watching " + result + ". Let's get this party started!");
             session.userData.movielength = 90;// The time in minutes            
 
-            session.send("You are watching " + movie.title + ". Let's get this party started!");
-
-            var intervalTimer = setInterval(function () {
-                session.send('test');
-            }, 1000);
-
-            setTimeout(function () {
-                session.send('time is up');
-                clearInterval(intervalTimer)
-            }, 5000);
-
-
-            if (result.response) {
-                session.send("You are watching " + result + ". Let's get this party started!");
-                session.userData.movielength = 90;// The time in minutes            
-
-            } else {
-                session.send("ok");
-            }
+        } else {
+            session.send("ok");
         }
 
         session.endConversation();
