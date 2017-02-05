@@ -69,14 +69,15 @@ bot.dialog('/startmovie', [
             }, 5000);
 
 
-        if (result.response) {            
-            session.send("You are watching " + result + ". Let's get this party started!"); 
-            session.userData.movielength = 90;// The time in minutes            
-            
-            session.endDialog();
+            if (result.response) {
+                session.send("You are watching " + result + ". Let's get this party started!");
+                session.userData.movielength = 90;// The time in minutes            
 
-        } else {
-            session.send("ok");
+                session.endDialog();
+
+            } else {
+                session.send("ok");
+            }
         }
     }
 ]);
