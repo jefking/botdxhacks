@@ -50,9 +50,11 @@ bot.dialog('/movie', [
 
     },
     function(session, results, next) {
-         var title = results.response.entity;
+         
+        session.endConversation(results.response.entity);
 
-        session.endConversation(title);
+        var title = results.response.entity;
+
         session.userData.movielength = 90;// The time in minutes            
 
         session.send("You are watching " + title + ". Let's get this party started!");
