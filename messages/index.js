@@ -15,6 +15,7 @@ var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure
 var bot = new builder.UniversalBot(connector);
 
 //bot.use({botbuilder: (session, next) => {session.endConversation('Ending...')}});
+//new stuff
 
 // Add dialog
 bot.dialog('/', [
