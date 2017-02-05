@@ -49,7 +49,7 @@ bot.dialog('/movie',
                 // session.send(message);
                 // builder.Prompts.text(session);
 
-                builder.Prompts.choice(session, message, topFive.map((movie) => movie.title));
+                builder.Prompts.choice(session, message, topFive.map((movie) => movie.id));
             } else {
                 session.send('Well this is embarassing I have no idea how to find you a movie...');
             }
@@ -58,12 +58,15 @@ bot.dialog('/movie',
     },
     function(session, results, next) {
         session.send(`Here's your movie.`);
-        var title = results.response.entity;
+        var movieId = results.response.entity;
 
-        session.send("You are watching " + title + ". Let's get this party started!");
+        session.send("You are watching movie Id " + movieId + ". Let's get this party started!");
 
         var intervalTimer = setInterval(function () {
-            session.send('In setInterval');
+            request("https://api.themoviedb.org/3/movie/" + movieId + "/translations?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6",function(error,response,body) {
+            const translation = JSON.parse(body);
+            var highestRow = translation.translations.length;
+            session.send(translation.translations[highestRow-1].name); });
         }, 1000);
 
         setTimeout(function () {
