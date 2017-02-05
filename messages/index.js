@@ -26,38 +26,47 @@ bot.dialog('/', [
 ]);
 
 bot.dialog('/movie', [
-function (session) {
+    function (session) {
         builder.Prompts.text(session, 'What movie are you watching?');
-    },    
-    function(session, results)
-    {
-        request("https://api.themoviedb.org/3/search/movie?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6&language=en-US&page=1&include_adult=false&query=" + results.response, function(error, response, body){
-            if (response){           
-                var movies = JSON.parse(body);   
+    },
+    function (session, results) {
+        request("https://api.themoviedb.org/3/search/movie?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6&language=en-US&page=1&include_adult=false&query=" + results.response, function (error, response, body) {
+            if (response) {
+                var movies = JSON.parse(body);
 
-                var topFive = movies.results.slice(0,5);
-                var cards = topFive.map(function(item) { return createCard(session, item)});
+                var topFive = movies.results.slice(0, 5);
+                var cards = topFive.map(function (item) { return createCard(session, item) });
                 var message = new builder.Message(session).attachments(cards).attachmentLayout('carousel');
-                session.send(message);  
+                session.send(message);
             } else {
                 session.send('Well this is embarassing I have no idea how to find you a movie...');
             }
         });
-        
+
         session.endDialog();
     },
     function (session, results) {
         session.userData.movie = results.response;
-        session.endDialog(session, 'KK whatever '+ session.userData.movie+' sounds ok');
+        session.endDialog(session, 'KK whatever ' + session.userData.movie + ' sounds ok');
     }
 ]);
 
 
 bot.dialog('/startmovie', [
     function (session, result) {
-        if (results.response) {            
+        if (result.response) {
             session.userData.movielength = 90;// The time in minutes            
-            session.send("You are watching " + result + ". Let's get this party started!"); 
+            session.send("You are watching " + result + ". Let's get this party started!");
+
+            var intervalTimer = setInterval(function () {
+                session.send('test');
+            }, 1000);
+
+            setTimeout(function () {
+                session.send('time is up');
+                clearInterval(intervalTimer)
+            }, 5000);
+
             session.endDialog();
         } else {
             session.send("ok");
@@ -70,18 +79,17 @@ bot.dialog('/startmovie', [
 if (useEmulator) {
     var restify = require('restify');
     var server = restify.createServer();
-    server.listen(3978, function() {
+    server.listen(3978, function () {
         console.log('test bot endpont at http://localhost:3978/api/messages');
     });
-    server.post('/api/messages', connector.listen());    
+    server.post('/api/messages', connector.listen());
 } else {
     module.exports = { default: connector.listen() }
 }
 
 
 
-function createCard(session, movie)
-{
+function createCard(session, movie) {
     var card = new builder.ThumbnailCard(session);
 
     card.title(movie.title);
