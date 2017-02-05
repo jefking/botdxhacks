@@ -53,28 +53,21 @@ bot.dialog('/movie', [
         session.send(`Here's your movie.`);
         var title = results.response.entity;
 
-        session.userData.movielength = 90;// The time in minutes            
-
         session.send("You are watching " + title + ". Let's get this party started!");
 
-        var intervalTimer = setInterval(function () {
+        /*var intervalTimer = setInterval(function () {
             session.send('test');
         }, 1000);
 
         setTimeout(function () {
             session.send('time is up');
             clearInterval(intervalTimer)
-        }, 5000);
+        }, 5000); */
 
         session.endConversation(results.response.entity);
     }
     
 ]);
-
-
-
-
-
 
 if (useEmulator) {
     var restify = require('restify');
@@ -86,8 +79,6 @@ if (useEmulator) {
 } else {
     module.exports = { default: connector.listen() }
 }
-
-
 
 function createCard(session, movie) {
     var card = new builder.ThumbnailCard(session);
