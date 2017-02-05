@@ -31,12 +31,12 @@ bot.dialog('/', [
     }
 ]);
 
-bot.dialog('/movie', (session) => {session.endConversation('in movie')})
-// [
-//     function (session) {
-//         console.debug('------ IN HERE!!!! --------');
-//         builder.Prompts.text(session, 'What movie are you watching?');
-//     },
+bot.dialog('/movie', 
+[
+    function (session) {
+        console.debug('------ IN HERE!!!! --------');
+        builder.Prompts.text(session, 'What movie are you watching?');
+    },
 //     function (session, results) {
 //         request("https://api.themoviedb.org/3/search/movie?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6&language=en-US&page=1&include_adult=false&query=" + results.response, function (error, response, body) {
 //             if (response) {
@@ -76,7 +76,7 @@ bot.dialog('/movie', (session) => {session.endConversation('in movie')})
         
 //     }
     
-// ]);
+]);
 
 if (useEmulator) {
     var restify = require('restify');
