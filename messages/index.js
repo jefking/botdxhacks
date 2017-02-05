@@ -3,7 +3,7 @@ var builder = require("botbuilder");
 var botbuilder_azure = require("botbuilder-azure");
 var request = require("request");
 
-var useEmulator =  (process.env.NODE_ENV == 'development');
+var useEmulator =  true; // (process.env.NODE_ENV == 'development');
 
 var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
     appId: process.env['MicrosoftAppId'],
@@ -35,7 +35,8 @@ function (session) {
             if (response){           
                 var movies = JSON.parse(body);   
 
-                var cards = movies.results.map(function(item) { return createCard(session, item)});
+                var topFive = movies.results.slice(0,5);
+                var cards = topFive.map(function(item) { return createCard(session, item)});
                 var message = new builder.Message(session).attachments(cards).attachmentLayout('carousel');
                 session.send(message);  
             } else {
