@@ -14,13 +14,13 @@ var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure
 
 var bot = new builder.UniversalBot(connector);
 
-bot.use({botbuilder: (session, next) => {session.endConversation('Ending...')}});
+//bot.use({botbuilder: (session, next) => {session.endConversation('Ending...')}});
 //new stuff
 
 // // Add dialog
 bot.dialog('/', [
     function (session, args, next) {
-        session.endConversation('finish');
+        //session.endConversation('finish');
         session.beginDialog('/movie');
     }
 ]);
@@ -43,8 +43,7 @@ bot.dialog('/movie',
                 // console.debug('------ IN HERE!!!! --------');
                 // session.send(message);
                 // builder.Prompts.text(session);
-                var movieid = movie.id.toString();
-                builder.Prompts.choice(session, message, topFive.map((movie) => movieid));
+                builder.Prompts.choice(session, message, topFive.map((movie) => movie.id.toString()));
             } else {
                 session.send('Well this is embarassing I have no idea how to find you a movie...');
             }
