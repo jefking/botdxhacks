@@ -3,7 +3,7 @@ var builder = require("botbuilder");
 var botbuilder_azure = require("botbuilder-azure");
 var request = require("request");
 
-var useEmulator = (process.env.NODE_ENV == 'development');
+var useEmulator =  (process.env.NODE_ENV == 'development');
 
 var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
     appId: process.env['MicrosoftAppId'],
@@ -22,25 +22,6 @@ bot.dialog('/', [
         } else {
             next();
         }
-    },
-    function (session, args, next) {
-        // Search for the movie and set it
-        if (!session.userData.movie) {
-            session.beginDialog('/find');
-        } else {
-            next();
-        }
-    },
-    function (session, args, next) {
-        if (!session.userData.movielength) {
-            session.beginDialog('/movielength');
-        } else {
-            next();
-        }
-    },
-    function (session) {
-        session.send('THIS IS ALL I CAN DO FOR NOW');
-        session.endDialog();
     }
 ]);
 
