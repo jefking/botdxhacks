@@ -105,6 +105,6 @@ function createCard(session, movie) {
     card.title(movie.title);
     card.images([builder.CardImage.create(session, "https://image.tmdb.org/t/p/w500" + movie.poster_path)]);
     card.text("Are you watching this movie? Tap this to receive fun facts throughout the show!");
-    card.tap(new builder.CardAction.beginDialog('/startmovie'));
+    card.tap(new builder.CardAction.imBack(session, "You are watching " + movie.title, "Let's get this party started!"));
     return card;
 } 
