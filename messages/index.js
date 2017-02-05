@@ -14,13 +14,13 @@ var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure
 
 var bot = new builder.UniversalBot(connector);
 
-//bot.use({botbuilder: (session, next) => {session.endConversation('Ending...')}});
+bot.use({botbuilder: (session, next) => {session.endConversation('Ending...')}});
 //new stuff
 
 // // Add dialog
 bot.dialog('/', [
     function (session, args, next) {
-        //session.endConversation('finish');
+        session.endConversation('finish');
         session.beginDialog('/movie');
     }
 ]);
@@ -43,7 +43,7 @@ bot.dialog('/movie',
                 // console.debug('------ IN HERE!!!! --------');
                 // session.send(message);
                 // builder.Prompts.text(session);
-                builder.Prompts.choice(session, message, topFive.map((movie) => movie.id.toString()));
+                builder.Prompts.choice(session, message, topFive.map((movie) => movie.title));
             } else {
                 session.send('Well this is embarassing I have no idea how to find you a movie...');
             }
@@ -57,7 +57,7 @@ bot.dialog('/movie',
         var intervalTimer = setInterval(function () {
             session.send("Let's see what languages it is available in.");
 
-            request("https://api.themoviedb.org/3/movie/" + movieId + "/translations?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6",function(error,response,body) {
+            request("https://api.themoviedb.org/3/movie/157350/translations?api_key=d2bd0f8ec7a732cd06702f331cc9f6b6",function(error,response,body) {
             const translation = JSON.parse(body);
             var highestRow = translation.translations.length;
             session.send(translation.translations[highestRow-1].name); });
