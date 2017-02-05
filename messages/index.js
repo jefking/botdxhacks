@@ -74,7 +74,7 @@ bot.dialog('/movie', [
             session.send("ok");
         }
 
-        session.endConversation();
+        session.endConversation(title);
     }
     
 ]);
