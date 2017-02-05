@@ -16,63 +16,90 @@ var bot = new builder.UniversalBot(connector);
 // Add dialog
 bot.dialog('/', [
     function (session, args, next) {
-        if (!session.userData.name) {
-            session.beginDialog('/profile');
-        } else {
-            next();
-        }
-    },
-    function (session, args, next) {
-        if (!session.dialogData.movie) {
+        if (!session.userData.movie) {
             session.beginDialog('/movie');
         } else {
             next();
         }
     },
     function (session, args, next) {
-        builder.Prompts.choice(session, 'I guess ' +session.dialogData.movie+ ' sounds fine. Ready to start this?');
-
-},
-    function (session, results, next) {
-        if (results.response) {
-            session.beginDialog('/moviefacts');
+        // Search for the movie and set it
+        if (!session.userData.movieid) {
+            session.beginDialog('/find');
         } else {
-            session.send('Fine be that way...')
+            next();
         }
     },
     function (session, args, next) {
-        session.send('THIS IS ALL I CAN DO FOR NOW');
-    },
-]);
-
-bot.dialog('/profile', [
-    function (session) {
-        builder.Prompts.text(session, 'Sooooo what is your name?');
-    },
-    function (session, results) {
-        session.userData.name = results.response;
-        session.endDialog(session, 'kk whatever '+ session.userData.name+' let us get to the good stuff');
-    }
-]);
-
-bot.dialog('/movie', [
-    function (session) {
-        builder.Prompts.confirm(session, 'Have you picked out a movie yet?');
-    },
-    function (session, results, next) {
-        if (results.response) {
-            builder.Prompts.text(session, 'What movie are you watching?');
-            session.dialogData.movie = results.response;
+        if (!session.userData.movielength) {
+            session.beginDialog('/movielength');
         } else {
-            session.beginDialog('/findmovie');
+            next();
         }
+    },
+    function (session) {
+        session.send('THIS IS ALL I CAN DO FOR NOW');
         session.endDialog();
     }
 ]);
 
-bot.dialog('/findmovie', [
+bot.dialog('/movie', [
+function (session) {
+        builder.Prompts.text(session, 'What movie are you watching?');
+    },
+    function (session, results) {
+        session.userData.movie = results.response;
+        session.endDialog(session, 'KK whatever '+ session.userData.movie+' sounds ok');
+    }
+]);
+
+bot.dialog('/find', [
     function (session) {
-        session.send('Well this is embarassing I have no idea how to find you a movie...');
+        // Call the API 
+        // Get a list of movies
+        var results = [
+            { name : "Spider Man",
+            poster_url : "https://images-na.ssl-images-amazon.com/images/M/MV5BOWU3ZjIxZmYtMTRkOC00NTUyLTlhYjUtODhjODE4NDI5ZGY2XkEyXkFqcGdeQXVyMjc0MjUzMzU@._V1_SY1000_CR0,0,694,1000_AL_.jpg",
+            html_url: "http://www.imdb.com/title/tt0392945/?ref_=fn_al_tt_2"
+        },
+        
+            { name : "Spider Man 1",
+            poster_url : "https://images-na.ssl-images-amazon.com/images/M/MV5BOWU3ZjIxZmYtMTRkOC00NTUyLTlhYjUtODhjODE4NDI5ZGY2XkEyXkFqcGdeQXVyMjc0MjUzMzU@._V1_SY1000_CR0,0,694,1000_AL_.jpg",
+            html_url: "http://www.imdb.com/title/tt0392945/?ref_=fn_al_tt_2"
+        },
+        
+            { name : "The amazing Spider Man",
+            poster_url : "https://images-na.ssl-images-amazon.com/images/M/MV5BOWU3ZjIxZmYtMTRkOC00NTUyLTlhYjUtODhjODE4NDI5ZGY2XkEyXkFqcGdeQXVyMjc0MjUzMzU@._V1_SY1000_CR0,0,694,1000_AL_.jpg",
+            html_url: "http://www.imdb.com/title/tt0392945/?ref_=fn_al_tt_2"
+        }
+        ];
+        var cards = results.map(function(item) { return createCard(session, item)});
+                    
+                    // prompt the user with the list
+                    //builder.Prompts.choice(session, 'What profile did you want to load?', usernames);
+                    var message = new builder.Message(session).attachments(cards).attachmentLayout('carousel');
+                    session.send(message); 
+        // display
+        // from selection reset name and set id
+
+    }
+]);
+
+function createCard(session, movie)
+{
+    
+    var card = new builder.ThumbnailCard(session);
+
+    card.title(movie.name);
+    card.images([builder.CardImage.create(session, movie.poster_url)]);
+    card.tap(new builder.CardAction.openUrl(session, movie.html_url));
+    return card;
+
+} 
+
+bot.dialog('/movielength', [
+    function (session, results) {
+        session.userData.movielength = 90;// The time in minutes
         session.endDialog();
     }
 ]);
