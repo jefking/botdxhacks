@@ -14,21 +14,14 @@ var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure
 
 var bot = new builder.UniversalBot(connector);
 
-//bot.use({botbuilder: (session, next) => {session.endConversation('Ending...')}});
+bot.use({botbuilder: (session, next) => {session.endConversation('Ending...')}});
 //new stuff
 
 // // Add dialog
 bot.dialog('/', [
     function (session, args, next) {
-        // session.endConversation('finish');
-
+        session.endConversation('finish');
         session.beginDialog('/movie');
-
-        // if (!session.userData.movie) {
-        //     session.beginDialog('/movie');
-        // } else {
-        //     next();
-        // }
     }
 ]);
 
