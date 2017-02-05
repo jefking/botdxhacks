@@ -54,13 +54,10 @@ function (session) {
 
 
 bot.dialog('/startmovie', [
-    function (session, results) {
-        builder.Prompts.choice(session, 'Hit the button when you start watching to receive fun facts about the movie.', 'Start movie');
-    },
-    function (session, results) {
+    function (session, result) {
         if (results.response) {            
             session.userData.movielength = 90;// The time in minutes            
-            session.send("Let's do this!"); 
+            session.send("You are watching " + result + ". Let's get this party started!"); 
             session.endDialog();
         } else {
             session.send("ok");
